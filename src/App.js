@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import styled from 'styled-components';
+import Map from './components/map';
+
+const AppWrapper = styled.div`
+	display: grid;
+	grid-template-columns: 70% auto;
+`;
+
+const Sidebar = styled.div`
+	z-index: 9999;
+	height: 100vh;
+	background-color: black;
+	color: white;
+`;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<AppWrapper>
+			<div>
+				<Map />
+			</div>
+			<Sidebar> Test Test</Sidebar>
+		</AppWrapper>
+	);
 }
 
 export default App;
