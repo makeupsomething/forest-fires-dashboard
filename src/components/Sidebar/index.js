@@ -235,7 +235,7 @@ const Sidebar = ({ selectedCounty }) => {
 						{natureOptions && (
 							<ReactECharts option={natureOptions} />
 						)}
-						<h2>Air Factors</h2>
+						<h2>Airborne Factors</h2>
 						<p>
 							The airbone factors that contributed to the fire in
 							each month, the largest value is the factor that
