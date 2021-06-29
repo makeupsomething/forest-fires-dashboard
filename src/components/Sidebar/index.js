@@ -34,6 +34,14 @@ const mobilityCategories = [
 	'residential_percent_change_from_baseline',
 ];
 
+const mobilityKeys = {
+	grocery_and_pharmacy_percent_change_from_baseline: 'Grocery & Pharmacy',
+	parks_percent_change_from_baseline: 'Parks',
+	transit_stations_percent_change_from_baseline: 'Transit',
+	workplaces_percent_change_from_baseline: 'Workplace',
+	residential_percent_change_from_baseline: 'Residential',
+};
+
 const defaultOptions = {
 	tooltip: {
 		trigger: 'axis',
@@ -121,7 +129,7 @@ const Sidebar = ({ selectedCounty }) => {
 
 			const mobilitySeries = mobilityCategories.map((cat) => {
 				return {
-					name: cat,
+					name: mobilityKeys[cat],
 					type: 'bar',
 					barGap: 0,
 					emphasis: {
@@ -211,16 +219,35 @@ const Sidebar = ({ selectedCounty }) => {
 					<h1>{selectedCounty} County</h1>
 					<ChartContainer>
 						<h2>Burned Area</h2>
+						<p>
+							Burned Area refers to how much area in the country
+							was bruned in a month
+						</p>
 						{burnedOptions && (
 							<ReactECharts option={burnedOptions} />
 						)}
 						<h2>Natural Factors</h2>
+						<p>
+							The natural factors that contributed to the fire in
+							each month, the largest value is the factor that
+							contributed most the the fire in that month
+						</p>
 						{natureOptions && (
 							<ReactECharts option={natureOptions} />
 						)}
 						<h2>Air Factors</h2>
+						<p>
+							The airbone factors that contributed to the fire in
+							each month, the largest value is the factor that
+							contributed most the the fire in that month
+						</p>
 						{airOptions && <ReactECharts option={airOptions} />}
 						<h2>Mobility Factors</h2>
+						<p>
+							The human mobility factors that contributed to the
+							fire in each month, the largest value is the factor
+							that contributed most the the fire in that month
+						</p>
 						{mobilityOptions && (
 							<ReactECharts option={mobilityOptions} />
 						)}
