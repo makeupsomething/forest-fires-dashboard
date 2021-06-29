@@ -1,25 +1,25 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Map from './components/map';
+import Sidebar from './components/Sidebar';
 
 const AppWrapper = styled.div`
 	display: grid;
 	grid-template-columns: 70% auto;
 `;
 
-const Sidebar = styled.div`
-	z-index: 9999;
-	height: 100vh;
-	background-color: black;
-	color: white;
-`;
-
 function App() {
+	const [selectedCounty, setSelectedCounty] = useState(null);
+
 	return (
 		<AppWrapper>
 			<div>
-				<Map />
+				<Map
+					selectedCounty={selectedCounty}
+					setSelectedCounty={setSelectedCounty}
+				/>
 			</div>
-			<Sidebar> Test Test</Sidebar>
+			<Sidebar selectedCounty={selectedCounty}> Test Test</Sidebar>
 		</AppWrapper>
 	);
 }
