@@ -8,6 +8,7 @@ const SidebarContainer = styled.div`
 	background-color: black;
 	color: white;
 	padding: 1rem;
+	overflow: scroll;
 `;
 
 const ChartContainer = styled.div`
@@ -17,23 +18,63 @@ const ChartContainer = styled.div`
 	gap: 1rem;
 `;
 
-const dataCategories = [
-	// 'Surface moisture anomaly',
-	// 'Surface temperature',
-	// 'precipitation',
-	//'NO2',
-	'CO2',
-	'AOD',
+const natureCategories = [
+	'Surface moisture anomaly',
+	'Surface temperature',
+	'precipitation',
 ];
+
+const airCategories = ['NO2', 'CO2', 'AOD'];
+
+const mobilityCategories = [
+	'grocery_and_pharmacy_percent_change_from_baseline',
+	'parks_percent_change_from_baseline',
+	'transit_stations_percent_change_from_baseline',
+	'workplaces_percent_change_from_baseline',
+	'residential_percent_change_from_baseline',
+];
+
+const defaultOptions = {
+	tooltip: {
+		trigger: 'axis',
+		axisPointer: {
+			type: 'shadow',
+		},
+	},
+	toolbox: {
+		show: false,
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			mark: { show: true },
+			dataView: { show: true, readOnly: false },
+			magicType: {
+				show: true,
+				type: ['line', 'bar', 'stack', 'tiled'],
+			},
+			restore: { show: true },
+			saveAsImage: { show: true },
+		},
+	},
+	yAxis: [
+		{
+			type: 'value',
+		},
+	],
+};
 
 const Sidebar = ({ selectedCounty }) => {
 	const [allCountyData, setAllCountyData] = useState([]);
 	const [countyData, setCountyData] = useState(null);
-	const [options, setOptions] = useState(null);
+	const [natureOptions, setNatureOptions] = useState(null);
+	const [airOptions, setAirOptions] = useState(null);
+	const [mobilityOptions, setMobilityOptions] = useState(null);
+	const [burnedOptions, setBurnedOptions] = useState(null);
 
 	useEffect(() => {
 		fetch(
-			'https://raw.githubusercontent.com/makeupsomething/forest-fires-dashboard-data/main/data/data_mobility_air_forest.json',
+			'https://raw.githubusercontent.com/makeupsomething/forest-fires-dashboard-data/main/data/min_max_normalize_data_mobility_air_forest.json',
 		)
 			.then((response) => response.json())
 			.then((data) => setAllCountyData(data));
@@ -51,7 +92,10 @@ const Sidebar = ({ selectedCounty }) => {
 	useEffect(() => {
 		if (countyData) {
 			const dates = countyData.map((data) => data.date);
-			const series = dataCategories.map((cat) => {
+			const burnedData = countyData.map(
+				(county) => county['Burned area'],
+			);
+			const natureSeries = natureCategories.map((cat) => {
 				return {
 					name: cat,
 					type: 'bar',
@@ -63,32 +107,32 @@ const Sidebar = ({ selectedCounty }) => {
 				};
 			});
 
-			setOptions({
-				tooltip: {
-					trigger: 'axis',
-					axisPointer: {
-						type: 'shadow',
+			const airSeries = airCategories.map((cat) => {
+				return {
+					name: cat,
+					type: 'bar',
+					barGap: 0,
+					emphasis: {
+						focus: 'series',
 					},
-				},
-				legend: {
-					data: dataCategories,
-				},
-				toolbox: {
-					show: false,
-					orient: 'vertical',
-					left: 'right',
-					top: 'center',
-					feature: {
-						mark: { show: true },
-						dataView: { show: true, readOnly: false },
-						magicType: {
-							show: true,
-							type: ['line', 'bar', 'stack', 'tiled'],
-						},
-						restore: { show: true },
-						saveAsImage: { show: true },
+					data: countyData.map((county) => county[cat]),
+				};
+			});
+
+			const mobilitySeries = mobilityCategories.map((cat) => {
+				return {
+					name: cat,
+					type: 'bar',
+					barGap: 0,
+					emphasis: {
+						focus: 'series',
 					},
-				},
+					data: countyData.map((county) => county[cat]),
+				};
+			});
+
+			setBurnedOptions({
+				...defaultOptions,
 				xAxis: [
 					{
 						type: 'category',
@@ -96,12 +140,66 @@ const Sidebar = ({ selectedCounty }) => {
 						data: dates,
 					},
 				],
-				yAxis: [
+				series: {
+					name: 'Burned Area',
+					type: 'bar',
+					barGap: 0,
+					emphasis: {
+						focus: 'series',
+					},
+					data: burnedData,
+				},
+			});
+
+			setNatureOptions({
+				...defaultOptions,
+				xAxis: [
 					{
-						type: 'value',
+						type: 'category',
+						axisTick: { show: false },
+						data: dates,
 					},
 				],
-				series,
+				legend: {
+					data: natureCategories,
+				},
+				series: natureSeries,
+			});
+
+			setAirOptions({
+				...defaultOptions,
+				xAxis: [
+					{
+						type: 'category',
+						axisTick: { show: false },
+						data: dates,
+					},
+				],
+				legend: {
+					data: airCategories,
+				},
+				series: airSeries,
+			});
+
+			setMobilityOptions({
+				...defaultOptions,
+				xAxis: [
+					{
+						type: 'category',
+						axisTick: { show: false },
+						data: dates,
+					},
+				],
+				legend: {
+					data: [
+						'Grocery & Pharmacy',
+						'Parks',
+						'Transit',
+						'Workplace',
+						'Residential',
+					],
+				},
+				series: mobilitySeries,
 			});
 		}
 	}, [countyData]);
@@ -112,7 +210,20 @@ const Sidebar = ({ selectedCounty }) => {
 				<>
 					<h1>{selectedCounty} County</h1>
 					<ChartContainer>
-						{options && <ReactECharts option={options} />}
+						<h2>Burned Area</h2>
+						{burnedOptions && (
+							<ReactECharts option={burnedOptions} />
+						)}
+						<h2>Natural Factors</h2>
+						{natureOptions && (
+							<ReactECharts option={natureOptions} />
+						)}
+						<h2>Air Factors</h2>
+						{airOptions && <ReactECharts option={airOptions} />}
+						<h2>Mobility Factors</h2>
+						{mobilityOptions && (
+							<ReactECharts option={mobilityOptions} />
+						)}
 					</ChartContainer>
 				</>
 			) : (
