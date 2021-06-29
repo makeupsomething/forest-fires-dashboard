@@ -30,8 +30,10 @@ const Map = ({ selectedCounty, setSelectedCounty }) => {
 		lineWidthMinPixels: 2,
 		getFillColor: (d) => {
 			const { COUNTY_NAME: countyName } = d.properties;
-			if (countyName === hoverInfo || countyName === selectedCounty) {
-				return [0, 255, 0, 255];
+			if (countyName === hoverInfo) {
+				return [255, 0, 0, 200];
+			} else if (countyName === selectedCounty) {
+				return [255, 0, 0, 250];
 			} else {
 				return [160, 160, 180, 200];
 			}

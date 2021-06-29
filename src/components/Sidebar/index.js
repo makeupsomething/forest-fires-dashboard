@@ -18,30 +18,19 @@ const ChartContainer = styled.div`
 	gap: 1rem;
 `;
 
-const options = {
-	grid: { top: 8, right: 8, bottom: 24, left: 36 },
-	xAxis: {
-		type: 'category',
-		data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-	},
-	yAxis: {
-		type: 'value',
-	},
-	series: [
-		{
-			data: [820, 932, 901, 934, 1290, 1330, 1320],
-			type: 'line',
-			smooth: true,
-		},
-	],
-	tooltip: {
-		trigger: 'axis',
-	},
-};
+const dataCategories = [
+	// 'Surface moisture anomaly',
+	// 'Surface temperature',
+	// 'precipitation',
+	//'NO2',
+	'CO2',
+	'AOD',
+];
 
 const Sidebar = ({ selectedCounty }) => {
 	const [allCountyData] = useState(visData);
 	const [countyData, setCountyData] = useState(null);
+	const [options, setOptions] = useState(null);
 
 	useEffect(() => {
 		if (selectedCounty) {
@@ -54,17 +43,77 @@ const Sidebar = ({ selectedCounty }) => {
 
 	useEffect(() => {
 		if (countyData) {
-			console.log(countyData);
+			const dates = countyData.map((data) => data.date);
+			const series = dataCategories.map((cat) => {
+				return {
+					name: cat,
+					type: 'bar',
+					barGap: 0,
+					emphasis: {
+						focus: 'series',
+					},
+					data: countyData.map((county) => county[cat]),
+				};
+			});
+
+			setOptions({
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow',
+					},
+				},
+				legend: {
+					data: dataCategories,
+				},
+				toolbox: {
+					show: false,
+					orient: 'vertical',
+					left: 'right',
+					top: 'center',
+					feature: {
+						mark: { show: true },
+						dataView: { show: true, readOnly: false },
+						magicType: {
+							show: true,
+							type: ['line', 'bar', 'stack', 'tiled'],
+						},
+						restore: { show: true },
+						saveAsImage: { show: true },
+					},
+				},
+				xAxis: [
+					{
+						type: 'category',
+						axisTick: { show: false },
+						data: dates,
+					},
+				],
+				yAxis: [
+					{
+						type: 'value',
+					},
+				],
+				series,
+			});
 		}
 	}, [countyData]);
 
 	return (
 		<SidebarContainer>
-			<h1>{selectedCounty} County</h1>
-			<ChartContainer>
-				<ReactECharts option={options} />
-				<ReactECharts option={options} />
-			</ChartContainer>
+			{selectedCounty ? (
+				<>
+					<h1>{selectedCounty} County</h1>
+					<ChartContainer>
+						{options && <ReactECharts option={options} />}
+					</ChartContainer>
+				</>
+			) : (
+				<>
+					<h1>{selectedCounty} Welcome</h1>
+					<p>Select a county to view see data</p>
+				</>
+			)}
 		</SidebarContainer>
 	);
 };
