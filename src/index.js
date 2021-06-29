@@ -11,6 +11,7 @@ const GlobalStyle = createGlobalStyle`
 		-moz-osx-font-smoothing: grayscale;
 		background: black;
 		font-family: 'IBM Plex Sans', sans-serif;
+		box-sizing: border-box;
 	}
 `;
 ReactDOM.render(
