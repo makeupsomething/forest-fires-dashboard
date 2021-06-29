@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { StaticMap } from 'react-map-gl';
-import geoData from '../../data/California_Counties.json';
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = `${process.env.REACT_APP_MAP_BOX_KEY}`;
@@ -21,7 +20,7 @@ const Map = ({ selectedCounty, setSelectedCounty }) => {
 
 	const geoLayer = new GeoJsonLayer({
 		id: 'geojson-layer',
-		data: geoData,
+		data: 'https://raw.githubusercontent.com/makeupsomething/forest-fires-dashboard-data/main/data/California_Counties.json',
 		pickable: true,
 		stroked: true,
 		filled: true,
