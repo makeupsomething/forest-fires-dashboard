@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import styled from 'styled-components';
-import visData from '../../data/data_mobility_air_forest.json';
 
 const SidebarContainer = styled.div`
 	z-index: 9999;
@@ -28,9 +27,17 @@ const dataCategories = [
 ];
 
 const Sidebar = ({ selectedCounty }) => {
-	const [allCountyData] = useState(visData);
+	const [allCountyData, setAllCountyData] = useState([]);
 	const [countyData, setCountyData] = useState(null);
 	const [options, setOptions] = useState(null);
+
+	useEffect(() => {
+		fetch(
+			'https://raw.githubusercontent.com/makeupsomething/forest-fires-dashboard-data/main/data/data_mobility_air_forest.json',
+		)
+			.then((response) => response.json())
+			.then((data) => setAllCountyData(data));
+	}, []);
 
 	useEffect(() => {
 		if (selectedCounty) {
